@@ -5,7 +5,7 @@ Issues
 Marketplace
 Explore
 
-@Stevihn
+Stevihn
 missionz3r0
 /
 VLC_Log_Creator
@@ -19,7 +19,7 @@ Wiki
 Security
 Insights
 VLC_Log_Creator/index.html
-@missionz3r0
+missionz3r0
 missionz3r0 Fix issue with gear loading.
 Latest commit 4f94a9c on Jun 1, 2021
  History
