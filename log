@@ -28,8 +28,12 @@ Latest commit 4f94a9c on Jun 1, 2021
 Executable File  1016 lines (876 sloc)  32.5 KB
 
 <!DOCTYPE html>
-
 <html>
+<body>
+<h1>Hello World</h1>
+<p>I'm hosted with GitHub Pages.</p>
+</body>
+</html>
 
   <head>
     <style>
