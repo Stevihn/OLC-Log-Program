@@ -1,37 +1,1062 @@
-## Welcome to GitHub Pages
+Skip to content
+Search or jump to…
+Pull requests
+Issues
+Marketplace
+Explore
 
-You can use the [editor on GitHub](https://github.com/Stevihn/OLC-Log-Program/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
+@Stevihn
+missionz3r0
+/
+VLC_Log_Creator
+Public
+Code
+Issues
+Pull requests
+Actions
+Projects
+Wiki
+Security
+Insights
+VLC_Log_Creator/index.html
+@missionz3r0
+missionz3r0 Fix issue with gear loading.
+Latest commit 4f94a9c on Jun 1, 2021
+ History
+ 2 contributors
+@missionz3r0@RonaldZielaznicki
+Executable File  1016 lines (876 sloc)  32.5 KB
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+<!DOCTYPE html>
+<html>
+<body>
+<h1>Hello World</h1>
+<p>I'm hosted with GitHub Pages.</p>
+</body>
+</html>
 
-### Markdown
+  <head>
+    <style>
+      .card-title{
+        color: black;
+      }
+    </style>
+    <meta charset="UTF-8">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+  </head>
+  <body>
+    <!--<button type="button" onClick="generateERLogs();">Create Logs</button>-->
+    <button type="button" onClick="input2JSON();">Export</button>
+    <input type="file" id="fileImport">
+    <p style="text-align: center;">
+      Current Level: <span id="currentLevel">0</span>
+    </p>
+    <ul class="nav nav-tabs" role="tablist">
+      <li class="nav-item">
+        <a class="nav-link active" id="logs-tab" data-toggle="tab" href="#logs" role="tab" aria-controls="logs" aria-selected="true">Logs</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" id="encounterReports-tab" data-toggle="tab" href="#encounterReports" role="tab" aria-controls="encounterReports" aria-selected="false">Encounter Reports</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" id="downtime-tab" data-toggle="tab" href="#downtime" role="tab" aria-controls="downtime" aria-selected="false">Retraining</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" id="transactions-tab" data-toggle="tab" href="#transactions" role="tab" aria-controls="transactions" aria-selected="false">Transactions</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" id="gear-tab" data-toggle="tab" href="#gear" role="tab" aria-controls="gear" aria-selected="false">Gear</a>
+      </li>
+    </ul>
+    <div class="tab-content">
+      <div class="tab-pane fade show active" id="logs" role="tabpanel" aria-labelledby="logs-tab">
+        <div class="card">
+          <div class="card-body">
+            <a data-toggle="collapse" area-expanded="false" aria-controls="expLog_container" href="#expLog_container">
+              <h5 class="card-title">Experience Log</h5>
+            </a>
+            <div class="collapse" id="expLog_container">
+              <h6 id="expLogSub" class="card-subtitle mb-2 text-muted"></h6>
+              <p id="expLog" class="card-text"></p>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-body">
+            <a data-toggle="collapse" area-expanded="false" aria-controls="lootLog_container" href="#lootLog_container">
+              <h5 class="card-title">Loot Log</h5>
+            </a>
+            <div class="collapse" id="lootLog_container">
+              <h6 id="lootLogSub" class="card-subtitle mb-2 text-muted"></h6>
+              <p id="lootLog" class="card-text"></p>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-body">
+            <a data-toggle="collapse" area-expanded="false" aria-controls="downtimeLog_container" href="#downtimeLog_container">
+              <h5 class="card-title">Downtime Log</h5>
+            </a>
+            <div class="collapse" id="downtimeLog_container">
+              <h6 id="downtimeLogSub" class="card-subtitle mb-2 text-muted"></h6>
+              <p id="downtimeLog" class="card-text"></p>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-body">
+            <a data-toggle="collapse" area-expanded="false" aria-controls="retrainingLog_container" href="#retrainingLog_container">
+              <h5 class="card-title">(Re)Training Log</h5>
+            </a>
+            <div class="collapse" id="retrainingLog_container">
+              <h6 id="retrainingLogSub" class="card-subtitle mb-2 text-muted"></h6>
+              <p id="retrainingLog" class="card-text"></p>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-body">
+            <a data-toggle="collapse" area-expanded="false" aria-controls="itemLog_container" href="#itemLog_container">
+              <h5 class="card-title">Item Access Log</h5>
+            </a>
+            <div class="collapse" id="itemLog_container">
+              <h6 id="itemAccessLogSub" class="card-subtitle mb-2 text-muted"></h6>
+              <p id="itemAccessLog" class="card-text"></p>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-body">
+            <a data-toggle="collapse" area-expanded="false" aria-controls="transactionLog_container" href="#transactionLog_container">
+              <h5 class="card-title">Transaction Log</h5>
+            </a>
+            <div class="collapse" id="transactionLog_container">
+              <h6 id="transactionLogSub" class="card-subtitle mb-2 text-muted"></h6>
+              <p id="transactionLog" class="card-text"></p>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-body">
+            <a data-toggle="collapse" area-expanded="false" aria-controls="gearLog_container" href="#gearLog_container">
+              <h5 class="card-title">Gear Log</h5>
+            </a>
+            <div class="collapse" id="gearLog_container">
+              <h6 id="gearLogSub" class="card-subtitle mb-2 text-muted"></h6>
+              <p id="gearLog" class="card-text"></p>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-body">
+            <a data-toggle="collapse" area-expanded="false" aria-controls="bankingLog_container" href="#bankingLog_container">
+              <h5 class="card-title">Banking Log</h5>
+            </a>
+            <div class="collapse" id="bankingLog_container">
+              <h6 id="bankingLogSub" class="card-subtitle mb-2 text-muted"></h6>
+              <p id="bankingLog" class="card-text"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tab-pane fade" id="encounterReports" role="tabpanel" aria-labelledby="encounterReports-tab">
+        <table class="table">
+          <thead class="thead-dark">
+            <tr>
+              <th></th>
+              <th>ER Code</th>
+              <th>ER Point Value</th>
+              <th>Bonus Points</th>
+              <th>Item Access</th>
+              <th>Banked?</th>
+              <th>Apply After</th>
+              <th>Delete</th>
+            </tr>
+          </thead>
+          <tbody id="ER_Input">
+          </tbody>
+        </table>
+        <button type="button" onClick="addERInput();">Add Encounter Report</button>
+      </div>
+      <div class="tab-pane fade" id="transactions" role="tabpanel" aria-labelledby="transactions-tab">
+        <table class="table">
+          <thead class="thead-dark">
+            <tr>
+              <th></th>
+              <th>Name</th>
+              <th>Date Purchased</th>
+              <th>Cost Per</th>
+              <th>Number Purchased</th>
+              <th>Delete</th>
+            </tr>
+          </thead>
+          <tbody id="Transaction_Input">
+          </tbody>
+        </table>
+        <button type="button" onClick="addTransactionInput();">Add Transaction</button>
+      </div>
+      <div class="tab-pane fade" id="gear" role="tabpanel" aria-labelledby="gear-tab">
+        <table class="table">
+          <thead class="thead-dark">
+            <tr>
+              <th></th>
+              <th>Name</th>
+              <th>Container</th>
+              <th>Weight Per</th>
+              <th>Number Remaining</th>
+              <th>Is this a Container?</th>
+              <th>Delete</th>
+            </tr>
+          </thead>
+          <tbody id="Gear_Input">
+          </tbody>
+        </table>
+        <button type="button" onClick="addGearInput();">Add Gear</button>
+      </div>
+      <div class="tab-pane fade" id="downtime" role="tabpanel" aria-labelledby="downtime-tab">
+        <table class="table">
+          <thead class="thead-dark">
+            <tr>
+              <th></th>
+              <th>Date Used</th>
+              <th>Number of days</th>
+              <th>Days Spent on</th>
+              <th>Delete</th>
+            </tr>
+          </thead>
+          <tbody id="Downtime_Input">
+          </tbody>
+        </table>
+        <button type="button" onClick="addDowntimeInput();">Add Downtime</button>
+      </div>
+    </div>
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+  </body>
+</html>
+<script
+			  src="https://code.jquery.com/jquery-3.3.1.min.js"
+			  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+			  crossorigin="anonymous">
+</script>
+<script src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js"></script>
+<script
+        src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+        integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+        crossorigin="anonymous">
+</script>
+<script>
+$('#ER_Input').sortable({
+  update: function(event, ui){
+    generateERLogs();
+  }
+});
 
-```markdown
-Syntax highlighted code block
+$('#Transaction_Input').sortable();
+$('#Gear_Input').sortable();
+$('#Downtime_Input').sortable();
 
-# Header 1
-## Header 2
-### Header 3
+const erInput = document.getElementById('ER_Input');
+const transactionInput = document.getElementById('Transaction_Input');
+const gearInput = document.getElementById('Gear_Input');
+const downtimeInput = document.getElementById('Downtime_Input');
+const lvl2loot = {
+  1:  345,
+  2:  436,
+  3:  495,
+  4:  525,
+  5:  997,
+  6: 1097,
+  7: 1150,
+  8: 1215,
+  9: 2046,
+  10:2757,
+  11:4327,
+  12:5464,
+  13:7500,
+  14:10829,
+  15:14955,
+  16:22250,
+  17:30790,
+  18:45562,
+  19:59465,
+  20:79977,
+  21:79977
+};
 
-- Bulleted
-- List
+const expObjects = {
+  1: {min: 0, max: 5},
+  2: {min: 6, max: 13},
+  3: {min: 14, max: 23},
+  4: {min: 24, max: 35},
+  5: {min: 36, max: 49},
+  6: {min: 50, max: 65},
+  7: {min: 66, max: 83},
+  8: {min: 84, max: 103},
+  9: {min: 104, max: 125},
+  10: {min: 126, max: 149},
+  11: {min: 150, max: 175},
+  12: {min: 176, max: 203},
+  13: {min: 204, max: 233},
+  14: {min: 234, max: 265},
+  15: {min: 266, max: 303},
+  16: {min: 304, max: 339},
+  17: {min: 340, max: 377},
+  18: {min: 378, max: 417},
+  19: {min: 418, max: 459},
+  20: {min: 460, max: 1000000},
+  21: {min: 1000001, max: 99900000}
+}
 
-1. Numbered
-2. List
+const lvl2downtime = {
+  1: 3,
+  2: 3,
+  3: 3,
+  4: 3,
+  5: 3,
+  6: 3,
+  7: 2,
+  8: 2,
+  9: 2,
+  10: 2,
+  11: 2,
+  12: 1,
+  13: 1,
+  14: 1,
+  15: 1,
+  16: 1,
+  17: 1,
+  18: 1,
+  19: 1,
+  20: 1,
+  21: 0
+}
 
-**Bold** and _Italic_ and `Code` text
+function exp2lvl(experience){
+  for (key in expObjects){
+    if((experience >= expObjects[key]['min']) && (experience <= expObjects[key]['max']))
+      return key;
+  }
+}
 
-[Link](url) and ![Image](src)
-```
+function roundToTwo(num) {
+  return +(Math.round(num + "e+2")  + "e-2");
+}
 
-For more details see [Basic writing and formatting syntax](https://docs.github.com/en/github/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax).
+function addERInput(){
+  let newElement = document.createElement("tr");
+  newElement.innerHTML = `
+      <td><span style="cursor: pointer;">&#9776;</span></td>
+      <td><input type="text" class="erCode"></td>
+      <td><input type="number" class="points"></td>
+      <td><input type="number" class="bonusPoints"></td>
+      <td><input type="text" class="itemAccess"></td>
+      <td><input type="checkbox" class="isBanked"></td>
+      <td><select class="applyAfter" disabled></select></td>
+      <td><span class="deleteER" style="cursor: pointer; color: red;">&#10008;</span></td>
+  `;
 
-### Jekyll Themes
+  erInput.appendChild(newElement);
+  return newElement;
+}
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/Stevihn/OLC-Log-Program/settings/pages). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+function addTransactionInput(){
+  let newElement = document.createElement("tr");
+  newElement.innerHTML = `
+      <td><span style="cursor: pointer;">&#9776;</span></td>
+      <td><input type="text" class="transactionName"></td>
+      <td><input type="date" class="transactionDate" value="`+(new Date().toJSON().slice(0, 10))+`"></td>
+      <td><input type="number" class="transactionCost" step="0.01"></td>
+      <td><input type="number" class="transactionNumberPurchased" value="1"></td>
+      <td><span class="transactionDelete" style="cursor: pointer; color: red;">&#10008;</span></td>
+  `;
 
-### Support or Contact
+  transactionInput.appendChild(newElement);
+  return newElement;
+}
 
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+function addGearInput(){
+  let newElement = document.createElement("tr");
+  newElement.innerHTML = `
+      <td><span style="cursor: pointer;">&#9776;</span></td>
+      <td><input type="text" class="gearName"></td>
+      <td>
+        <select class="gearContainer">
+          <optgroup>
+            <option value="Carried">Carried</option>
+            <option value="Not Carried">Not Carried</option>
+          </optgroup>
+          <optgroup class="gearAvailableContainers" label="Containers">
+          </optgroup>
+        </select>
+      </td>
+      <td><input type="number" class="gearWeight" step="0.01"></td>
+      <td><input type="number" class="gearNumberRemaining" value="1"></td>
+      <td><input type="checkbox" class="gearIsContainer"></td>
+      <td><span class="gearDelete" style="cursor: pointer; color: red;">&#10008;</span></td>
+  `;
+
+  gearInput.appendChild(newElement);
+  return newElement;
+}
+
+function addDowntimeInput(){
+  let newElement = document.createElement("tr");
+  newElement.innerHTML = `
+      <td><span style="cursor: pointer;">&#9776;</span></td>
+      <td><input type="date" class="downtimeDate" value="`+(new Date().toJSON().slice(0, 10))+`"></td>
+      <td><input type="number" class="downtimeNumDays"></td>
+      <td><input type="text" class="downtimeDescription"></td>
+      <td><span class="downtimeDelete" style="cursor: pointer; color: red;">&#10008;</span></td>
+  `;
+
+  downtimeInput.appendChild(newElement);
+  return newElement;
+}
+
+function addBankedReportsToReportOrder(reportOrder, bankedReportsNeedingApplied, reports){
+  if(bankedReportsNeedingApplied.length > 0){
+    for(let i = bankedReportsNeedingApplied.length-1;i >= 0;i--){
+      let applyAfter = reports[bankedReportsNeedingApplied[i]]['applyAfter'];
+      let indexToInsert = reportOrder.indexOf(applyAfter)+1;
+      if(indexToInsert > 0){
+        reportOrder.splice(indexToInsert, 0, bankedReportsNeedingApplied[i]);
+        bankedReportsNeedingApplied.splice(i, 1);
+      }
+      else{
+        if(bankedReportsNeedingApplied.indexOf(applyAfter) == -1)
+          bankedReportsNeedingApplied.splice(i, 1);
+      }
+    }
+
+    return addBankedReportsToReportOrder(reportOrder, bankedReportsNeedingApplied, reports);
+  }
+  else{
+    return reportOrder;
+  }
+
+}
+
+var totalExp = 0;
+var totalLoot = 1600;
+var totalLootPoints = 0;
+var totalBonusPoints = 0;
+var currentBonusPoints = 0;
+var totalDowntime = 3
+var totalDowntimeDays = 0;
+var totalDowntimeDaysSpent = 0;
+var totalSpent = 0;
+var totalSold = 0;
+
+function generateERLogs(){
+  totalExp = 0;
+  let expLog = '';
+
+  totalLoot = 200;
+  totalLootPoints = 0;
+  let lootLog = '1600 - Starting Credits<br>';
+
+  totalBonusPoints = 0;
+  currentBonusPoints = 0;
+
+  totalDowntime = 3
+  let downtimeLog = '3 DP - Level 1<br>';
+
+  let accessLog = '';
+
+  let reportOrder = [];
+  let bankedReportsNeedingApplied = [];
+  let reports = {};
+
+  let bankedLogs = '';
+
+  $('#ER_Input tr').each(function(){
+    let erCode = $(this).find('.erCode').val().replace(/"/g, "'");
+    let expPoints = parseInt($(this).find('.points').val()) || 0;
+    let bonusPoints = parseInt($(this).find('.bonusPoints').val()) || 0;
+    let itemAccess = $(this).find('.itemAccess').val();
+    let isBanked = $(this).find('.isBanked').is(':checked');
+    let applyAfter = $(this).find('.applyAfter').val() || '';
+
+    reports[erCode] = {
+      points: parseInt($(this).find('.points').val()) || 0,
+      bonusPoints: parseInt($(this).find('.bonusPoints').val()) || 0,
+      itemAccess: $(this).find('.itemAccess').val(),
+      applyAfter: applyAfter,
+      levelEarned: parseInt(exp2lvl(totalExp))
+    }
+
+    if(!isBanked){
+      totalExp += expPoints;
+      reportOrder.push(erCode);
+    }
+    else if(applyAfter.length > 0){
+      bankedReportsNeedingApplied.push(erCode);
+      bankedLogs += erCode +'- applied after '+applyAfter+'<br>';
+    }
+    else{
+      bankedLogs += erCode+'<br>';
+    }
+  })
+
+  reportOrder = addBankedReportsToReportOrder(reportOrder, bankedReportsNeedingApplied, reports);
+
+  let appliedExp = 0;
+
+  for(report of reportOrder){
+    let erCode = report;
+    let expPoints = reports[report]['points'];
+    let downtimePoints = expPoints;
+    let lootPoints = expPoints;
+    let bonusPoints = reports[report]['bonusPoints'];
+    let itemAccess = reports[report]['itemAccess'];
+    let levelEarned = reports[report]['levelEarned'];
+
+    downtimeLog += downtimePoints+' DP - '+erCode+'<br>';
+    totalDowntime += downtimePoints;
+
+    let currentLvl = parseInt(exp2lvl(appliedExp));
+
+    if(expPoints > 0){
+      let lootPointsApplied = 0;
+      let loot = 0;
+      let lootPointsString = '';
+      let lootGoldString = '';
+      for(let i = currentLvl; i<= parseInt(exp2lvl(appliedExp+expPoints)); i++){
+        let lootPointsToApply = 0;
+        if((totalLootPoints+lootPoints-lootPointsApplied)>(expObjects[i]['max']+1))
+          lootPointsToApply = expObjects[i]['max']+1-totalLootPoints;
+        else
+          lootPointsToApply = lootPoints-lootPointsApplied;
+
+        if(lootPointsToApply != 0){
+          lootPointsString += lootPointsToApply+' LP (Level '+i+'), ';
+          lootGoldString += lootPointsToApply+'*'+lvl2loot[i]+'+'
+          loot += lootPointsToApply*lvl2loot[i];
+          totalLootPoints += lootPointsToApply;
+          lootPointsApplied += lootPointsToApply;
+        }
+
+        if(i != currentLvl){
+          downtimeLog += lvl2downtime[i]+' DP - Level '+i+'<br>';
+          totalDowntime += lvl2downtime[i];
+        }
+      }
+      lootLog+=lootPointsString.slice(0,-2) +' and '+bonusPoints+' BP - '+erCode+' ('+lootGoldString.slice(0,-1)+'='+loot+')<br>';
+      totalLoot+=loot;
+
+      totalBonusPoints += bonusPoints;
+      currentBonusPoints += bonusPoints;
+      if(currentBonusPoints >= 5){
+        let numConvertedLootPoints = (currentBonusPoints-(currentBonusPoints%5))/5;
+        currentBonusPoints -= numConvertedLootPoints*5;
+        lootLog += 'Converting ' + (numConvertedLootPoints*5) + ' BP into '+numConvertedLootPoints+' LP (Level '+levelEarned+') = ' + (numConvertedLootPoints*lvl2loot[levelEarned])+'<br>';
+        totalLoot += numConvertedLootPoints*lvl2loot[levelEarned];
+      }
+
+      appliedExp += expPoints;
+
+      expLog += expPoints+' XP - '+erCode+'<br>';
+    }
+
+    accessLog += erCode+' - '+itemAccess+'<br>';
+  }
+
+  totalDowntimeDays = (((totalDowntime-(totalDowntime%3))/3)*7);
+
+  $('#expLog').html(expLog);
+  $('#expLogSub').html('EXP: '+appliedExp);
+  $('#currentLevel').html(exp2lvl(appliedExp));
+  $('#lootLog').html(lootLog);
+  $('#downtimeLog').html(downtimeLog);
+  $('#downtimeLogSub').html('C:'+(totalDowntime%3)+'/3, Total: '+totalDowntime+', Days Earned: '+totalDowntimeDays);
+  $('#itemAccessLog').html(accessLog);
+  $('#bankingLog').html(bankedLogs);
+
+  generateTransactionLogs();
+  generateRetrainingLogs();
+}
+
+function generateTransactionLogs(){
+  totalSpent = 0;
+  totalSold = 0;
+
+  let transactionLog = '';
+
+  let transactions = {};
+
+  $('#Transaction_Input tr').each(function(){
+    let name = $(this).find('.transactionName').val();
+    let date = $(this).find('.transactionDate').val();
+    let cost = parseFloat($(this).find('.transactionCost').val()) || 0;
+    let numberPurchased = parseInt($(this).find('.transactionNumberPurchased').val()) || 0
+
+    if(!(date in transactions)){
+      transactions[date] = [];
+    }
+
+    transactions[date].push({
+      "name": name,
+      "cost": cost,
+      "numberPurchased": numberPurchased
+    });
+
+  });
+
+  for (dateString in transactions){
+    let transactionDate = new Date(dateString);
+    transactionDate.setTime( transactionDate.getTime() + transactionDate.getTimezoneOffset()*60*1000 );
+    transactionLog += (transactionDate.getMonth()+1)+'/'+(transactionDate.getDate())+'/'+transactionDate.getFullYear()+' - <ul style="list-style-type:none;">';
+
+    let boughtItems = [];
+    let soldItems = [];
+
+    for (transaction of transactions[dateString]){
+      let text = ''
+      if (transaction.numberPurchased > 1)
+        text += transaction.name+'['+transaction.numberPurchased+'] ('+transaction.cost * transaction.numberPurchased+')';
+      else
+        text += transaction.name+' ('+transaction.cost * transaction.numberPurchased+')';
+      if(transaction.cost >= 0){
+        totalSpent += transaction.cost * transaction.numberPurchased;
+        boughtItems.push(text);
+      }
+      else{
+        totalSold -= transaction.cost *transaction.numberPurchased;
+        soldItems.push(text);
+      }
+    }
+
+    if(boughtItems.length > 0)
+      transactionLog += '<li>Bought: ' + boughtItems.join(', ')+'</li>';
+
+    if(soldItems.length > 0)
+      transactionLog += '<li>Sold: ' + soldItems.join(', ')+'</li>';
+
+    transactionLog += '</ul>'
+  }
+
+
+  $('#lootLogSub').html('Current: '+roundToTwo(roundToTwo(totalLoot)-roundToTwo(roundToTwo(totalSpent)-roundToTwo(totalSold)))+'g, Total: '+totalLoot+'g, BP: '+currentBonusPoints+' (Total '+totalBonusPoints+')');
+
+  $('#transactionLogSub').html('Spent: '+roundToTwo(totalSpent)+'g, Sold: '+roundToTwo(totalSold)+'g, Net Loss: '+roundToTwo(roundToTwo(totalSpent)-roundToTwo(totalSold))+'g');
+  $('#transactionLog').html(transactionLog);
+}
+
+function generateGearLogs(){
+  let gearLog = '';
+  let totalWeight = 0;
+  let containers = ['Carried', 'Not Carried'];
+  let gear = {};
+
+  $('#Gear_Input tr').each(function(){
+    $this = $(this);
+    let name = $this.find('.gearName').val();
+    let container = $this.find('.gearContainer').val() || 'Carried';
+    let weight = parseFloat($this.find('.gearWeight').val()) || 0;
+    let numberRemaining = parseInt($this.find('.gearNumberRemaining').val()) || 0
+    let isContainer = $this.find('.gearIsContainer').is(':checked');
+
+    if(isContainer){
+      containers.push(name);
+    }
+
+    if(!(container in gear)){
+      gear[container] = [];
+    }
+
+    gear[container].push({
+      "name": name,
+      "weight": weight,
+      "numberRemaining": numberRemaining
+    });
+
+  });
+
+  for (container of containers){
+    if(container in gear){
+      let containerHTML = container+':<br><ul style="list-style-type:none;">';
+
+      gear[container].sort((a, b) => {
+        if (a.name < b.name) {
+          return -1;
+        } else if (a.name > b.name) {
+          return 1;
+        } else {
+          return 0;
+        }
+      })
+
+      for(item of gear[container]){
+        containerHTML += '<li>'
+        if (item.numberRemaining == 1)
+          containerHTML += item.name +' ('+item.weight+')';
+        else
+          containerHTML += item.name +'['+item.numberRemaining+'] ('+item.weight+')';
+        containerHTML += '</li>';
+	if (container !== 'Not Carried') {
+          totalWeight += item.weight * item.numberRemaining;
+	}
+      }
+
+      gearLog += containerHTML + '</ul>';
+    }
+  }
+
+  $('#gearLogSub').html('Weight: '+totalWeight);
+  $('#gearLog').html(gearLog);
+
+}
+
+function generateRetrainingLogs(){
+  let downtimeLog = '';
+  let downtimeDaysSpent = 0;
+
+  let downtimeByDate = {};
+
+  $('#Downtime_Input tr').each(function(){
+    $this = $(this);
+    let numDays = parseInt($this.find('.downtimeNumDays').val()) || 0;
+    let desc = $this.find('.downtimeDescription').val();
+    let date = $(this).find('.downtimeDate').val();
+
+    if(!(date in downtimeByDate)){
+      downtimeByDate[date] = [];
+    }
+
+    downtimeByDate[date].push({
+      "numDays": numDays,
+      "desc": desc,
+    });
+
+  });
+
+  for (dateString in downtimeByDate){
+    let downtimeDate = new Date(dateString);
+    downtimeDate.setTime( downtimeDate.getTime() + downtimeDate.getTimezoneOffset()*60*1000 );
+    downtimeLog += (downtimeDate.getMonth()+1)+'/'+(downtimeDate.getDate())+'/'+downtimeDate.getFullYear()+' - <ul style="list-style-type:none;">';
+
+    for (downtime of downtimeByDate[dateString]){
+      downtimeDaysSpent += downtime.numDays;
+      downtimeLog += '<li>Spent '+downtime.numDays+' days on '+downtime.desc+'</li>'
+    }
+
+    downtimeLog += '</ul>';
+  }
+
+  totalDowntimeDaysSpent = downtimeDaysSpent;
+
+  $('#retrainingLogSub').html('Days Spent: '+totalDowntimeDaysSpent+', Days Remaining: '+(totalDowntimeDays-totalDowntimeDaysSpent));
+  $('#retrainingLog').html(downtimeLog);
+}
+
+function input2JSON(){
+  let jsonFile = {errts: [], transactions: [], gear: [], downtime: []};
+  $('#ER_Input tr').each(function(){
+    $this = $(this);
+    jsonFile['errts'].push({
+      ERCode: $this.find('.erCode').val(),
+      ERPoints: parseInt($this.find('.points').val()),
+      BonusPoints: parseInt($this.find('.bonusPoints').val()),
+      ItemAccess: $this.find('.itemAccess').val(),
+      IsBanked: $this.find('.isBanked').is(':checked'),
+      ApplyAfter: $this.find('.applyAfter').val()
+    });
+  });
+
+  $('#Transaction_Input tr').each(function(){
+    $this = $(this);
+    jsonFile['transactions'].push({
+      Name: $this.find('.transactionName').val(),
+      'Date': $this.find('.transactionDate').val(),
+      Cost: parseFloat($this.find('.transactionCost').val()),
+      NumberPurchased: parseInt($this.find('.transactionNumberPurchased').val())
+    });
+  });
+
+  $('#Gear_Input tr').each(function(){
+    $this = $(this);
+    jsonFile['gear'].push({
+      Name: $this.find('.gearName').val(),
+      Container: $this.find('.gearContainer').val(),
+      Weight: parseFloat($this.find('.gearWeight').val()),
+      NumberRemaining: parseInt($this.find('.gearNumberRemaining').val()),
+      IsContainer: $this.find('.gearIsContainer').is(':checked')
+    });
+  });
+
+  $('#Downtime_Input tr').each(function(){
+    $this = $(this);
+    jsonFile['downtime'].push({
+      NumDays: $this.find('.downtimeNumDays').val(),
+      'Date': $this.find('.downtimeDate').val(),
+      Description: $this.find('.downtimeDescription').val(),
+    });
+  });
+
+  let file = new Blob([JSON.stringify(jsonFile)], {type: "application/json"});
+  let filename  = prompt("File Name:")+'.json';
+  if (window.navigator.msSaveOrOpenBlob) // IE10+
+      window.navigator.msSaveOrOpenBlob(file, filename);
+  else { // Others
+      var a = document.createElement("a"),
+      url = URL.createObjectURL(file);
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(function() {
+          document.body.removeChild(a);
+          window.URL.revokeObjectURL(url);
+      }, 0);
+  }
+}
+
+function JSON2Input(evt){
+  erInput.innerHTML = '';
+  let file = evt.target.files[0];
+  let reader = new FileReader();
+
+  reader.onload = function(progressEvent){
+    let jsonFile = JSON.parse(this.result);
+
+    $('#ER_Input').html('');
+    $('#Transaction_Input').html('');
+    $('#Gear_Input').html('');
+    $('#Downtime_Input').html('');
+
+    if('errts' in jsonFile){
+      let applyAfters = []
+
+      for(errt of jsonFile['errts']) {
+        let $element = $(addERInput());
+
+        $element.find('.erCode').val(errt['ERCode']);
+        $element.find('.points').val(errt['ERPoints']);
+        $element.find('.bonusPoints').val(errt['BonusPoints']);
+        $element.find('.itemAccess').val(errt['ItemAccess']);
+        $element.find('.isBanked').prop( "checked", errt['IsBanked'] );
+        if(errt['IsBanked']) {
+          applyAfters.push({
+            $element: $element,
+            applyAfter: errt['ApplyAfter'] || 'None'
+          })
+        }
+      }
+
+      for (let applyAfterObject of applyAfters) {
+        applyAfterObject.$element.find('.applyAfter').prop('disabled', false);
+        generateApplyAfter(applyAfterObject.$element.find('.applyAfter'))
+        applyAfterObject.$element.find('.applyAfter').val(applyAfterObject.applyAfter);
+      }
+    }
+
+    if('transactions' in jsonFile){
+      for(transaction of jsonFile['transactions']){
+        let $element = $(addTransactionInput());
+
+        $element.find('.transactionName').val(transaction['Name']);
+        $element.find('.transactionDate').val(transaction['Date']);
+        $element.find('.transactionCost').val(transaction['Cost']);
+        $element.find('.transactionNumberPurchased').val(transaction['NumberPurchased']);
+      }
+    }
+
+    if('gear' in jsonFile){
+      let delayedContainers = [];
+
+      for(gear of jsonFile['gear']){
+        let $element = $(addGearInput());
+
+        $element.find('.gearName').val(gear['Name']);
+        if($element.find("option[value='"+gear['Container'].replaceAll('\'','')+"']").length > 0){
+          $element.find('.gearContainer').val(gear['Container'].replaceAll('\'',''));
+        }
+        else{
+          delayedContainers.push({containerSelect: $element.find('.gearContainer'), container:gear['Container']});
+        }
+        $element.find('.gearWeight').val(gear['Weight']);
+        $element.find('.gearNumberRemaining').val(gear['NumberRemaining']);
+        $element.find('.gearIsContainer').prop('checked', gear['IsContainer']);
+      }
+
+      for (delayedContainer of delayedContainers){
+        fillGearSelect(delayedContainer.containerSelect);
+        delayedContainer.containerSelect.val(delayedContainer['container']);
+      }
+    }
+
+    if('downtime' in jsonFile){
+      for(downtime of jsonFile['downtime']){
+        let $element = $(addDowntimeInput());
+
+        $element.find('.downtimeNumDays').val(downtime['NumDays']);
+        $element.find('.downtimeDescription').val(downtime['Description']);
+        $element.find('.downtimeDate').val(downtime['Date']);
+      }
+    }
+
+     generateERLogs();
+     generateTransactionLogs();
+     generateGearLogs();
+     generateRetrainingLogs();
+  }
+
+  reader.readAsText(file);
+}
+
+$('#fileImport').change(JSON2Input);
+
+addERInput();
+addTransactionInput();
+addGearInput();
+addDowntimeInput();
+
+function generateApplyAfter($applyAfter) {
+  $applyAfter.prop('disabled', false);
+
+  let html = '<option value="None">None</option>';
+  let originalValue = $applyAfter.parent().parent().find('.erCode').val().replace(/"/g, "'")
+
+  $applyAfter.html('');
+  $('.erCode').each(function(){
+    let val = $(this).val().replace(/"/g, "'");
+
+    if(val != originalValue)
+      html += '<option value="'+val+'">'+val+'</option>';
+  });
+
+  $applyAfter.html(html);
+}
+
+$('#ER_Input').on('blur', 'input', generateERLogs);
+$('#ER_Input').on('change', '.isBanked', function(){
+  let $parent = $(this).parent().parent();
+  if($(this).is(':checked')){
+    let $applyAfter = $parent.find('.applyAfter');
+    generateApplyAfter($applyAfter)
+  }
+  else{
+    $parent.find('.applyAfter').prop('disabled', true);
+    $parent.find('.applyAfter').val('None');
+  }
+  generateERLogs();
+});
+$('#ER_Input').on('keypress', 'input', function(event){
+  let keycode = (event.keyCode ? event.keyCode : event.which);
+  if(keycode == '13'){
+    $(addERInput()).find('.erCode').focus();
+  }
+})
+
+$('#ER_Input').on('change', '.applyAfter', generateERLogs);
+
+$('#ER_Input').on('click', '.deleteER', function(){
+  if(confirm('Delete ER Log named: '+ $(this).closest('tr').find('.erCode').val()+'?')){
+    $(this).closest('tr').remove();
+    generateERLogs();
+  }
+});
+
+$('#Transaction_Input').on('blur', 'input', generateTransactionLogs);
+
+$('#Transaction_Input').on('keypress', 'input', function(event){
+  let keycode = (event.keyCode ? event.keyCode : event.which);
+  if(keycode == '13'){
+    $(addTransactionInput()).find('.transactionName').focus();
+  }
+})
+
+$('#Transaction_Input').on('click', '.transactionDelete', function(){
+  if(confirm('Delete Transaction Log named: '+ $(this).closest('tr').find('.transactionName').val()+'?')){
+    $(this).closest('tr').remove();
+    generateTransactionLogs();
+  }
+});
+
+$('#Gear_Input').on('blur', 'input,select', generateGearLogs);
+
+$('#Gear_Input').on('keypress', 'input', function(event){
+  let keycode = (event.keyCode ? event.keyCode : event.which);
+  if(keycode == '13'){
+    $(addGearInput()).find('.gearName').focus();
+  }
+})
+
+$('#Gear_Input').on('click', '.gearDelete', function(){
+  if(confirm('Delete Gear Log named: '+ $(this).closest('tr').find('.gearName').val()+'?')){
+    $(this).closest('tr').remove();
+    generateGearLogs();
+  }
+});
+
+function fillGearSelect($element){
+  let html = '';
+
+  let originName = $element.closest('tr').find('.gearName').val();
+
+  let $containers = $element.find('.gearAvailableContainers')
+
+  $containers.html('');
+  $(gearInput).find('tr').each(function(){
+    let $this = $(this);
+    let name = $this.find('.gearName').val();
+
+    if($this.find('.gearIsContainer').is(':checked') && name != originName){
+      html+= '<option value="'+name.replaceAll('\'','')+'">'+name+'</option>';
+    }
+  });
+
+  $containers.html(html);
+
+}
+
+$('#Gear_Input').on('focus', '.gearContainer', function(){
+  let html = '';
+
+  let originName = $(this).closest('tr').find('.gearName').val();
+
+  let $containers = $(this).find('.gearAvailableContainers')
+
+  $containers.html('');
+  $(gearInput).find('tr').each(function(){
+    let $this = $(this);
+    let name = $this.find('.gearName').val();
+
+    if($this.find('.gearIsContainer').is(':checked') && name != originName){
+      html+= '<option value="'+name.replaceAll('\'','')+'">'+name+'</option>';
+    }
+  });
+
+  $containers.html(html);
+
+});
+
+$('#Downtime_Input').on('blur', 'input', generateRetrainingLogs);
+
+$('#Downtime_Input').on('keypress', 'input', function(event){
+  let keycode = (event.keyCode ? event.keyCode : event.which);
+  if(keycode == '13'){
+    $(addTransactionInput()).find('.transactionName').focus();
+  }
+})
+
+$('#Downtime_Input').on('click', '.downtimeDelete', function(){
+  if(confirm('Delete Downtime Log?')){
+    $(this).closest('tr').remove();
+    generateRetrainingLogs();
+  }
+});
+</script>
+© 2022 GitHub, Inc.
+Terms
+Privacy
+Security
+Status
+Docs
+Contact GitHub
+Pricing
+API
+Training
+Blog
+About
+Loading complete
